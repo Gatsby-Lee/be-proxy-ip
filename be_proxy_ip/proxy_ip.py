@@ -25,34 +25,57 @@ class ProxyIP(object):
         'request_ip',
     ]
 
-    def __init__(self, proxy_info):
+    def __init__(self,
+                 proxy_ip, proxy_port, proxy_username, proxy_pwd, request_ip,
+                 proxy_id=-1, last_request_time=-1, num_ok_requests=0,
+                 num_banned_requests=0, num_timedout_requests=0, counted=0):
         """
         Init ProxyIP object
+        """
+        self.proxy_id = proxy_id
+        self.proxy_ip = proxy_ip
+        self.proxy_port = proxy_port
+        self.proxy_username = proxy_username
+        self.proxy_pwd = proxy_pwd
+        self.last_request_time = last_request_time
+        self.num_ok_requests = num_ok_requests
+        self.num_banned_requests = num_banned_requests
+        self.num_timedout_requests = num_timedout_requests
+        self.counted = counted
+        self.request_ip = request_ip
+
+    def __str__(self):
+        masked_pwd = '*' * len(self.proxy_pwd)
+        return ("ProxyIP(proxy_ip='%s', proxy_port=%s, request_ip='%s', proxy_id=%s, \
+num_ok_requests=%s, num_banned_requests=%s, num_timedout_requests=%s, \
+proxy_username='%s', proxy_pwd='%s', counted=%s)") % (
+            self.proxy_ip, self.proxy_port, self.request_ip, self.proxy_id,
+            self.num_ok_requests, self.num_banned_requests, self.num_timedout_requests,
+            self.proxy_username, masked_pwd, self.counted)
+
+    @staticmethod
+    def create_from_tuple(proxyip_info):
+        """
+        Create ProxyIP object with proxyip_info
 
         Args:
-            proxy_info: list, tuple, or serialized JSON
+            proxyip_info: (tuple)
+        Return
+            ProxyIP object
         """
-
-        if type(proxy_info) in ALLOWED_PROXY_INFO_TYPE:
-            proxy_info_tuple = proxy_info
-        else:
-            proxy_info_tuple = json.loads(proxy_info)
-        self.proxy_id = proxy_info_tuple[0]
-        self.proxy_ip = proxy_info_tuple[1]
-        self.proxy_port = proxy_info_tuple[2]
-        self.proxy_username = proxy_info_tuple[3]
-        self.proxy_pwd = proxy_info_tuple[4]
-        self.last_request_time = proxy_info_tuple[5]
-        self.num_ok_requests = proxy_info_tuple[6]
-        self.num_banned_requests = proxy_info_tuple[7]
-        self.num_timedout_requests = proxy_info_tuple[8]
-        self.counted = proxy_info_tuple[9]
-        self.request_ip = proxy_info_tuple[10]
-
-    def __repr__(self):
-        return 'proxy_id: %s, proxy_ip: %s, proxy_request_ip : %s, ok_ct: %s, banned_ct: %s, timedout_ct: %s' % (
-            self.proxy_id, self.proxy_ip, self.request_ip, self.num_ok_requests,
-            self.num_banned_requests, self.num_timedout_requests)
+        return ProxyIP(
+            proxy_id=proxyip_info[0],
+            proxy_ip=proxyip_info[1],
+            proxy_port=proxyip_info[2],
+            proxy_username=proxyip_info[3],
+            proxy_pwd=proxyip_info[4],
+            last_request_time=proxyip_info[5],
+            num_ok_requests=proxyip_info[6],
+            num_banned_requests=proxyip_info[7],
+            num_timedout_requests=proxyip_info[8],
+            counted=proxyip_info[9],
+            request_ip=proxyip_info[10],
+        )
 
     def reset_stats(self):
         self.num_ok_requests = 0
