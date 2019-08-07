@@ -1,5 +1,3 @@
-import time
-
 import pytest
 
 from be_proxy_ip import ProxyIP
@@ -129,3 +127,16 @@ def test_is_partially_used(proxyip_obj):
     proxyip_obj.num_banned_requests = 0
     proxyip_obj.num_timedout_requests = 0
     assert proxyip_obj.is_partially_used(threshold) is True
+
+
+def test_create_noproxy():
+
+    noproxyip_obj = ProxyIP.create_noproxy()
+    assert noproxyip_obj.proxy_id == -1
+    assert noproxyip_obj.proxy_ip == ProxyIP.NO_PROXY_IP
+    assert noproxyip_obj.proxy_port == -1
+    assert noproxyip_obj.proxy_username == ProxyIP.NO_PROXY_IP
+    assert noproxyip_obj.proxy_pwd == ProxyIP.NO_PROXY_IP
+    assert noproxyip_obj.request_ip == ProxyIP.NO_PROXY_IP
+
+    assert noproxyip_obj.is_noproxy() is True

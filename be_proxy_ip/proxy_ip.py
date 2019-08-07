@@ -11,6 +11,8 @@ ALLOWED_PROXY_INFO_TYPE = (list, tuple,)
 
 class ProxyIP(object):
 
+    NO_PROXY_IP = 'noproxyip'
+
     __slots__ = [
         'proxy_id',
         'proxy_ip',
@@ -53,8 +55,8 @@ proxy_username='%s', proxy_pwd='%s', counted=%s)") % (
             self.num_ok_requests, self.num_banned_requests, self.num_timedout_requests,
             self.proxy_username, masked_pwd, self.counted)
 
-    @staticmethod
-    def create_from_tuple(proxyip_info):
+    @classmethod
+    def create_from_tuple(cls, proxyip_info):
         """
         Create ProxyIP object with proxyip_info
 
@@ -75,6 +77,25 @@ proxy_username='%s', proxy_pwd='%s', counted=%s)") % (
             num_timedout_requests=proxyip_info[8],
             counted=proxyip_info[9],
             request_ip=proxyip_info[10],
+        )
+
+    @classmethod
+    def create_noproxy(cls):
+        """
+        Create ProxyIP object with proxyip_info
+
+        Args:
+            proxyip_info: (tuple)
+        Return
+            ProxyIP object
+        """
+        return ProxyIP(
+            proxy_id=-1,
+            proxy_ip=cls.NO_PROXY_IP,
+            proxy_port=-1,
+            proxy_username=cls.NO_PROXY_IP,
+            proxy_pwd=cls.NO_PROXY_IP,
+            request_ip=cls.NO_PROXY_IP,
         )
 
     def reset_stats(self):
@@ -101,6 +122,9 @@ proxy_username='%s', proxy_pwd='%s', counted=%s)") % (
         return self.num_ok_requests < threshold \
             and self.num_banned_requests == 0 \
             and self.num_timedout_requests == 0
+
+    def is_noproxy(self):
+        return self.proxy_ip == self.NO_PROXY_IP
 
     def serialize_proxy(self):
         """
